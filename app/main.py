@@ -13,7 +13,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Caminho para o arquivo de avaliações
-file_path = os.path.join('app', 'avaliacoes.text')
+file_path = os.path.join('app', 'data', 'avaliacoes.text')
 
 # 1. Coleta de Dados
 def scrape_reviews_from_file(file_path):
