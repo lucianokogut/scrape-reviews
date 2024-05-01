@@ -1,3 +1,4 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
@@ -11,28 +12,18 @@ import logging
 # Configuração do logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Caminho para o arquivo de avaliações
+file_path = os.path.join('app', 'avaliacoes.text')
+
 # 1. Coleta de Dados
-def scrape_reviews(url):
-    logging.info(f'Iniciando a coleta de avaliações em {url}')
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    reviews = soup.find_all('div', class_='review')
-    logging.info(f'Foram coletadas {len(reviews)} avaliações')
-    return [review.text for review in reviews]
+def scrape_reviews_from_file(file_path):
+    logging.info(f'Iniciando a coleta de avaliações do arquivo: {file_path}')
+    with open(file_path, 'r', encoding='utf-8') as file:
+        reviews = file.readlines()
+    logging.info(f'Foram coletadas {len(reviews)} avaliações do arquivo')
+    return reviews
 
-# Exemplo de coleta de avaliações do Booking
-booking_url = 'https://www.booking.com/city/br/bombinhas.pt-br.html'
-
-# Exemplo de coleta de avaliações do Google My Business
-google_url = 'https://www.google.com/search?q=hotéis+bombinhas&rlz=1C1CHBF_enUS890US891&oq=hotéis+bombinhas&aqs=chrome..69i57j0i512l2.1078j0j4&sourceid=chrome&ie=UTF-8'
-
-# Exemplo de coleta de avaliações do Google Maps
-praia_bombinhas_url = '../avaliacoes.html'
-
-# Exemplo de coleta de avaliações do TripAdvisor
-# tripadvisor_url = 'https://www.tripadvisor.com.br/Hotels-g680214-Bombinhas_State_of_Santa_Catarina-Hotels.html'
-
-reviews = scrape_reviews(praia_bombinhas_url)
+reviews = scrape_reviews_from_file(file_path)
 
 # 2. Pré-processamento
 def preprocess_reviews(reviews):
