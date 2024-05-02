@@ -8,17 +8,22 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from textblob import TextBlob
 import logging
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('rslp')
 
 # Configuração do logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Caminho para o arquivo de avaliações
-file_path = os.path.join('app', 'data', 'avaliacoes.text')
+file_path = os.path.join('data', 'avaliacoes.text')
 
 # 1. Coleta de Dados
 def scrape_reviews_from_file(file_path):
     logging.info(f'Iniciando a coleta de avaliações do arquivo: {file_path}')
-    with open(file_path, 'r', encoding='utf-8') as file:
+    with open(file_path, 'r') as file:
         reviews = file.readlines()
     logging.info(f'Foram coletadas {len(reviews)} avaliações do arquivo')
     return reviews
@@ -30,6 +35,8 @@ def preprocess_reviews(reviews):
     logging.info('Iniciando pré-processamento das avaliações')
     cleaned_reviews = []
     stop_words = set(stopwords.words('portuguese'))
+    # Use o stemmer RSLP para o português brasileiro
+    stemmer = nltk.stem.RSLPStemmer()
     lemmatizer = WordNetLemmatizer()
 
     for review in reviews:
@@ -41,8 +48,10 @@ def preprocess_reviews(reviews):
 
         # Remoção de stop words e lematização
         cleaned_words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
-
         cleaned_reviews.append(cleaned_words)
+
+        stemmed_words = [stemmer.stem(word) for word in cleaned_words]
+        cleaned_reviews.append(stemmed_words)
 
     logging.info('Pré-processamento das avaliações concluído')
     return cleaned_reviews
@@ -81,9 +90,12 @@ def generate_word_frequencies(reviews, sentiments):
                 word_frequencies[word] = {'positivo': 0, 'negativo': 0, 'neutro': 0}
             word_frequencies[word][sentiment] += 1
     logging.info('Frequências de palavras geradas')
-    return word_frequencies
+    sorted_word_frequencies = dict(sorted(word_frequencies.items()))
+
+    return sorted_word_frequencies
 
 word_frequencies = generate_word_frequencies(cleaned_reviews, sentiments)
+logging.info(word_frequencies)
 
 # Exemplo de visualização da nuvem de palavras para palavras predominantemente positivas
 positive_words = {word: freq['positivo'] for word, freq in word_frequencies.items()}
