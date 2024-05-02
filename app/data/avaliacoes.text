@@ -1,26 +1,10 @@
-scrape-reviews/
-│
-├── app/
-│   ├── main.py
-│   ├── requirements.txt
-│
-├── avaliacoes.text
-├── docker-compose.yml
-├── Dockerfile
-
-
-
 Praia de Bombinhas
 
 
-
-
 Restaurantes
 
-
 Hotéis
 
-
 Coisas legais para fazer
 
 
